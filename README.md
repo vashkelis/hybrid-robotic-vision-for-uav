@@ -12,6 +12,12 @@ so that the receiver gets both:
 - **scene continuity** from the video stream, and
 - **higher-detail semantic evidence** from selected still crops.
 
+<p align="center">
+  <img src="figures/hybrid_pipeline_figure.png" alt="Hybrid visual telemetry pipeline" width="90%"/>
+</p>
+
+<p align="center"><em>Hybrid visual telemetry pipeline: continuous low-bitrate video preserves scene context, while selectively transmitted ROI stills provide higher-detail semantic evidence.</em></p>
+
 The current implementation is a **proof-of-concept / pilot pipeline** intended for reproducible experiments and an arXiv preprint. It is modular by design: each notebook handles one stage of the pipeline and writes explicit manifests for the next stage.
 
 ---
@@ -314,6 +320,26 @@ What is intentionally preliminary:
 - the classifier is a **general ResNet-50**, not a task-specific aerial classifier
 - the current selector is frame-based; stronger temporal suppression / cooldown policies are future work
 - JPEG is used as a practical still-image baseline; future work may replace or compare it with JPEG XL or JPEG AI
+
+## Visual evidence — ROI crop quality comparison
+
+The figures below demonstrate the key visual advantage of the hybrid approach. The same detected object (a car) is shown as cropped from:
+
+- the **original source video** (left),
+- the **compressed low-bitrate base video** (center), and
+- the **separately transmitted JPEG still** (right).
+
+The compressed-video crops suffer from temporal blurring, motion smearing, and loss of fine structure — artifacts inherent to inter-frame video coding at low bitrates. In contrast, the decoded JPEG stills exhibit typical spatial quantization artifacts (blockiness, ringing) but preserve significantly more structural detail and sharper edges, which translates directly into higher classifier confidence.
+
+<p align="center">
+  <img src="figures/cropped_vs_extracted.png" alt="Crop quality comparison — small and large vehicle crops" width="85%"/>
+</p>
+
+<p align="center">
+  <img src="figures/cropped_vs_extracted2.png" alt="Crop quality comparison — front and rear vehicle crops" width="85%"/>
+</p>
+
+<p align="center"><em>Left: original crop &nbsp;|&nbsp; Center: compressed-video crop &nbsp;|&nbsp; Right: decoded JPEG crop. Video compression introduces motion blur and structural loss; JPEG stills retain sharper detail for downstream classification.</em></p>
 
 ---
 
